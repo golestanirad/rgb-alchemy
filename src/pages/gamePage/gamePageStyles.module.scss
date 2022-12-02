@@ -1,0 +1,59 @@
+$size: 30px;
+
+.container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .info {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    .miniCard {
+      width: 320px;
+    }
+  }
+  .shape {
+    margin-top: 30px;
+    .row {
+      margin: 10px;
+      display: flex;
+      .highlighted {
+        border: 5px solid rgb(127, 136, 1);
+      }
+      .hidden {
+        border: none;
+        background-color: transparent;
+        width: $size;
+        height: $size;
+        margin: 10px;
+        pointer-events: none;
+      }
+      .cyrcle {
+        background-color: black;
+        width: $size;
+        height: $size;
+        border-radius: 50%;
+        margin: 10px;
+      }
+      .squre {
+        background-color: black;
+        width: $size;
+        height: $size;
+        margin: 10px;
+      }
+      .red {
+        background-color: red;
+      }
+      .green {
+        background-color: green;
+      }
+      .blue {
+        background-color: blue;
+      }
+    }
+  }
+}

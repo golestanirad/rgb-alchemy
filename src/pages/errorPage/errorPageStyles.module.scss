@@ -1,0 +1,28 @@
+.container {
+  background-color: var(--clr-grey-10);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  .image {
+    width: 30vw;
+  }
+  .text {
+    font-family: "Fuzzy Bubbles", cursive;
+    margin-top: 30px;
+  }
+  a {
+    &:active {
+      color: var(--clr-primary-1);
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .container {
+    .image {
+      width: 80vw;
+    }
+  }
+}

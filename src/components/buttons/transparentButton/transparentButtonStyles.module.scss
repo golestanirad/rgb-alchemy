@@ -1,0 +1,13 @@
+.container {
+  padding: 20px 30px;
+  margin: 10px;
+  background-color: transparent;
+  color: var(--clr-primary-1);
+  font-size: 20px;
+  transition: 1s;
+  border: none;
+  letter-spacing: 4px;
+  &:hover {
+    letter-spacing: 6px;
+  }
+}
