@@ -201,18 +201,14 @@ export const getShapeType = (
 export const getHighlighted = (
   id: string,
   isFirstLoad: boolean,
-  columns: number,
-  indexesOfTheClosests: number[]
+  squaresWithLowestDiff: { [index: string]: number }
 ) => {
   if (isFirstLoad) {
     return "";
   }
-  const [row, column] = id.split(",");
-  const indexOfElement =
-    parseInt(row) * (getTopRowCyrcleIDs(columns).length + 2) + parseInt(column);
-  return indexesOfTheClosests.includes(indexOfElement) ? "highlighted" : "";
+  // console.log({ keys: Object.keys(squaresWithLowestDiff) });
+  return Object.keys(squaresWithLowestDiff).includes(id) ? "highlighted" : "";
 };
-
 export const getCyrcleInitialColors = (
   id: string,
   initialRgbCyrcles: object
@@ -225,4 +221,15 @@ export const getCyrcleInitialColors = (
     return keyOfID;
   }
   return "";
+};
+
+export const getClosestRGB = (
+  squaresColors: { [index: string]: number[] },
+  closestSquars: { [index: string]: number }
+) => {
+  console.log({ squaresColors, closestSquars });
+  if (_.isEmpty(squaresColors)) return "";
+  const id = Object.keys(closestSquars)[0];
+  const RGB = squaresColors[id];
+  return `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
 };

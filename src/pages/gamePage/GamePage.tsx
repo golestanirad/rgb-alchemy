@@ -10,12 +10,12 @@ import {
   getHiddenButtons,
   findColor,
   calculateColorDifference,
-  getTopRowCyrcleIDs,
   getShapeType,
-  getHighlighted,
   getCyrcleInitialColors,
+  getHighlighted,
+  getClosestRGB,
 } from "../../utils/gameUtil";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useAppSelector } from "../../hooks/reduxHooks";
 import { Dialog, MiniCard } from "../../components";
 import _ from "lodash";
@@ -34,52 +34,55 @@ const GamePage: React.FC = () => {
   const [numberOfTrys, setNumberOfTrys] = useState<number>(0);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [isFirstLoad, setIsFirstLoad] = useState<boolean>(true);
-  const [indexesOfTheClosests, setIndexesOfTheClosests] = useState<number[]>(
-    []
-  );
-  const [closestColor, setClosestColor] = useState<number[]>([0, 0, 0]);
-  const [difference, setDifference] = useState<number>(0);
+  const [closestSquars, setclosestSquars] = useState<{
+    [index: string]: number;
+  }>({});
+  const [stateSquaresColors, setStatesquaresColors] = useState<{
+    [index: string]: number[];
+  }>({});
 
-  const colorsOfElements: number[][] | undefined = [];
-  const colorsOfSquares: number[][] | undefined = [];
+  const [difference, setDifference] = useState<number>(0);
+  const squaresColors: { [index: string]: number[] } = {};
 
   useEffect(() => {
     /*
     in this "useEffect" we achive three goals:
-    1) we find the indexes of the aquares that have the closets color
-    2) we open the "End Dialod" if the game is done
-    3)
+    1) we find the the lowest differnece 
+    2) closest squares (squares with lowest difference)
+    3) show the dialog if lowest diff is < 10%
     */
-    const indexes: number[] = [];
-    const differences: number[] = [];
-    colorsOfElements.forEach((colorOfElement) => {
-      differences.push(
-        calculateColorDifference(gameData.target, colorOfElement)
-      );
-    });
-    const copyOfDifferences = [...differences].sort();
 
-    differences.forEach((diff, index) => {
-      if (diff === copyOfDifferences[0]) {
-        indexes.push(index);
+    const differences: { [index: string]: number } = {};
+    _.forOwn(squaresColors, (color, id) => {
+      const diff = calculateColorDifference(gameData.target, color);
+      differences[id] = diff;
+    });
+    let lowestDiff = Object.values(differences).sort()[0];
+
+    let squaresWithLowestDiff: { [index: string]: number } = {};
+    _.forOwn(differences, (diff, id) => {
+      if (diff === lowestDiff) {
+        squaresWithLowestDiff[id] = diff;
       }
     });
-    if (!_.isEqual(indexes, indexesOfTheClosests)) {
+
+    if (!_.isEqual(squaresWithLowestDiff, closestSquars)) {
       /// we need to do this "if" to prevent the re-render-loop
-      setIndexesOfTheClosests(indexes);
+      setclosestSquars(squaresWithLowestDiff);
     }
 
-    if (copyOfDifferences[0] * 100 < 10) {
+    if (!_.isEqual(squaresColors, stateSquaresColors)) {
+      /// we need to do this "if" to prevent the re-render-loop
+      setStatesquaresColors(squaresColors);
+    }
+
+    if (lowestDiff * 100 < 10) {
       /// * 100 so we get the % of the difference
       setShowDialog(true);
     }
 
-    setDifference(copyOfDifferences[0] * 100);
+    setDifference(lowestDiff * 100);
   });
-
-  useEffect(() => {
-    setClosestColor(colorsOfElements[indexesOfTheClosests[0] || 0]);
-  }, [indexesOfTheClosests]); /// do not to pass that "colorsOfElements" to the dependency array or make a "useCallback" of it
 
   //// data
   const rows = gameData?.height + 2;
@@ -96,13 +99,10 @@ const GamePage: React.FC = () => {
     if (cyrcleButtons.includes(id)) {
       if (initialRgbCyrcles.red === "") {
         setInitialRgbCyrcles({ ...initialRgbCyrcles, red: id });
-        colorsOfElements.push([255, 0, 0]);
       } else if (initialRgbCyrcles.green === "") {
         setInitialRgbCyrcles({ ...initialRgbCyrcles, green: id });
-        colorsOfElements.push([0, 255, 0]);
       } else if (initialRgbCyrcles.blue === "") {
         setInitialRgbCyrcles({ ...initialRgbCyrcles, blue: id });
-        colorsOfElements.push([0, 255, 0]);
       }
       setIsFirstLoad(false);
     }
@@ -128,7 +128,6 @@ const GamePage: React.FC = () => {
         setShowDialog(true);
       }
       setNumberOfTrys((preState) => preState + 1);
-      //  setMoved((preState) => preState + 1);
     }
   };
 
@@ -146,14 +145,10 @@ const GamePage: React.FC = () => {
       rows,
       columns
     );
-    if (color) {
+
+    if (color && !getCyrcleButtons(rows, columns).includes(id)) {
       const [r, g, b] = color.match(/\d+/g).map(Number);
-      colorsOfElements.push([r, g, b]);
-      if (!getCyrcleButtons(rows, columns).includes(id)) {
-        colorsOfSquares.push([r, g, b]);
-      }
-    } else {
-      colorsOfElements.push([]);
+      squaresColors[id] = [r, g, b];
     }
 
     return color;
@@ -205,13 +200,17 @@ const GamePage: React.FC = () => {
         </div>
         <div className={styles.miniCard}>
           <MiniCard
-            title="Closets color:"
+            title="Closest color:"
             text={
               <div
                 style={{
                   width: "30px",
                   height: "30px",
-                  backgroundColor: `rgb(${closestColor?.[0]},${closestColor?.[1]},${closestColor?.[2]})`,
+
+                  backgroundColor: `${getClosestRGB(
+                    stateSquaresColors,
+                    closestSquars
+                  )}`,
                   borderRadius: "10px",
                 }}
               />
@@ -255,12 +254,7 @@ const GamePage: React.FC = () => {
                   styles[getCyrcleInitialColors(i + "," + j, initialRgbCyrcles)]
                 } ${
                   styles[
-                    getHighlighted(
-                      i + "," + j,
-                      isFirstLoad,
-                      columns,
-                      indexesOfTheClosests
-                    )
+                    getHighlighted(i + "," + j, isFirstLoad, closestSquars)
                   ]
                 }`}
                 onClick={handleClick}
