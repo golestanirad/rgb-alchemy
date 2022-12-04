@@ -14,6 +14,7 @@ import {
   getCyrcleInitialColors,
   getHighlighted,
   getClosestRGB,
+  getTooltip,
 } from "../../utils/gameUtil";
 import { useState, useEffect } from "react";
 import { useAppSelector } from "../../hooks/reduxHooks";
@@ -186,6 +187,7 @@ const GamePage: React.FC = () => {
             title="Target color:"
             text={
               <div
+                title={`rgb(${gameData?.target[0]},${gameData?.target[1]},${gameData?.target[2]})`}
                 style={{
                   width: "30px",
                   height: "30px",
@@ -203,6 +205,7 @@ const GamePage: React.FC = () => {
             title="Closest color:"
             text={
               <div
+                title={`${getClosestRGB(stateSquaresColors, closestSquars)}`}
                 style={{
                   width: "30px",
                   height: "30px",
@@ -234,6 +237,7 @@ const GamePage: React.FC = () => {
           <div key={i} className={styles.row}>
             {Array.from({ length: columns }).map((_, j) => (
               <div
+                title={getTooltip(i + "," + j, stateSquaresColors)}
                 draggable={cyrcleButtons.includes(i + "," + j) ? false : true}
                 onDragStart={handleDragStart}
                 onDragOver={(ev) => {

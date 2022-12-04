@@ -206,7 +206,6 @@ export const getHighlighted = (
   if (isFirstLoad) {
     return "";
   }
-  // console.log({ keys: Object.keys(squaresWithLowestDiff) });
   return Object.keys(squaresWithLowestDiff).includes(id) ? "highlighted" : "";
 };
 export const getCyrcleInitialColors = (
@@ -227,9 +226,18 @@ export const getClosestRGB = (
   squaresColors: { [index: string]: number[] },
   closestSquars: { [index: string]: number }
 ) => {
-  console.log({ squaresColors, closestSquars });
   if (_.isEmpty(squaresColors)) return "";
   const id = Object.keys(closestSquars)[0];
   const RGB = squaresColors[id];
   return `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
+};
+
+export const getTooltip = (
+  id: string,
+  stateSquaresColors: { [index: string]: number[] }
+) => {
+  const RGB = stateSquaresColors[id];
+  return _.isEmpty(stateSquaresColors[id])
+    ? ""
+    : `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
 };
