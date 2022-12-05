@@ -1,3 +1,7 @@
+RGB Alchemy is a small game application in which the player can try to mix colors to create new colors. The game goal is to get a color which “matches” the target color in limited moves.
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
