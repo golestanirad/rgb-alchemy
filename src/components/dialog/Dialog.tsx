@@ -3,25 +3,28 @@ import Modal from "react-bootstrap/Modal";
 
 interface Props {
   isDisplied: boolean;
-  handleClose: () => void;
+  handleFinish: () => void;
+  handleRestart: () => void;
   title: string;
   text: string;
-  buttonText: string;
 }
 
 const Dialog: React.FC<Props> = (props) => {
   //// props
-  const { isDisplied, handleClose, title, text, buttonText } = props;
+  const { isDisplied, handleFinish, handleRestart, title, text } = props;
 
   return (
-    <Modal show={isDisplied} onHide={handleClose}>
+    <Modal show={isDisplied}>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>{text}</Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleClose}>
-          {buttonText}
+        <Button variant="primary" onClick={handleFinish}>
+          Finish The Game
+        </Button>
+        <Button variant="primary" onClick={handleRestart}>
+          Play Again
         </Button>
       </Modal.Footer>
     </Modal>

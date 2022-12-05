@@ -17,12 +17,17 @@ import {
   getTooltip,
 } from "../../utils/gameUtil";
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
 import { Dialog, MiniCard } from "../../components";
 import _ from "lodash";
+import {
+  fetchAlchemyInfo,
+  fetchUserAlchemyInfo,
+} from "../../store/alchemy/thunks";
 
 const GamePage: React.FC = () => {
   //// hooks
+  const dispatch = useAppDispatch();
   const [initialRgbCyrcles, setInitialRgbCyrcles] = useState({
     red: "",
     green: "",
@@ -132,7 +137,15 @@ const GamePage: React.FC = () => {
     }
   };
 
-  const handleDialog = () => {
+  const handleFinishTheGame = () => {
+    dispatch(fetchAlchemyInfo());
+    navigate("/");
+  };
+
+  const handleRestartTheGame = () => {
+    setNumberOfTrys(0);
+    dispatch(fetchUserAlchemyInfo(gameData.userId));
+    setShowDialog(false);
     navigate("/");
   };
 
@@ -161,8 +174,8 @@ const GamePage: React.FC = () => {
       <Dialog
         title="Good Try! :)"
         text="You couldn't get close enough"
-        buttonText="New Game?"
-        handleClose={handleDialog}
+        handleFinish={handleFinishTheGame}
+        handleRestart={handleRestartTheGame}
         isDisplied={showDialog}
       />
       <div className={styles.info}>

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { fetchAlchemyInfo } from "./thunks";
+import { fetchAlchemyInfo, fetchUserAlchemyInfo } from "./thunks";
 import { AlchemyInfo } from "./types";
 
 interface InitialState {
@@ -24,6 +24,7 @@ export const alchemySlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    ////initial game info fetch
     builder
       .addCase(fetchAlchemyInfo.pending, (state) => {
         state.isLoading = true;
@@ -36,6 +37,23 @@ export const alchemySlice = createSlice({
         }
       )
       .addCase(fetchAlchemyInfo.rejected, (state, action) => {
+        state.isLoading = false;
+        console.log("fetch github user info - error => ", action.payload);
+      });
+    //// game info fetch for the specific user
+
+    builder
+      .addCase(fetchUserAlchemyInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(
+        fetchUserAlchemyInfo.fulfilled,
+        (state, action: PayloadAction<AlchemyInfo>) => {
+          state.isLoading = false;
+          state.alchemyInfo = action.payload;
+        }
+      )
+      .addCase(fetchUserAlchemyInfo.rejected, (state, action) => {
         state.isLoading = false;
         console.log("fetch github user info - error => ", action.payload);
       });

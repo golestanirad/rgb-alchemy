@@ -126,21 +126,21 @@ export const findColor = (
       squareRowId + "," + 0,
       squareRowId + "," + (columns - 1),
     ];
-
+    console.log({ id, sideCyrclesIDS, coloredCyrcesIDs });
     let howMuchRed = 0;
     let howMuchGreen = 0;
     let howMuchBlue = 0;
     let colorOfCyrcle: any = "";
-
     coloredCyrcesIDs.forEach((cyrcleID) => {
       if (sideCyrclesIDS.includes(cyrcleID)) {
         colorOfCyrcle = _.findKey(
           initialRgbCyrcles,
           (value) => value === cyrcleID
         );
-
+        console.log(3, { colorOfCyrcle });
         if (Object.keys(extraCyrcles).includes(cyrcleID)) {
           colorOfCyrcle = extraCyrcles[cyrcleID];
+          console.log(4, { colorOfCyrcle });
         }
 
         if (colorOfCyrcle) {
@@ -157,20 +157,24 @@ export const findColor = (
             : getTopRowCyrcleIDs(columns).length - 1;
 
           if (colorOfCyrcle === "red") {
+            console.log(6);
             howMuchRed = 255 * ((length + 1 - distance) / (length + 1));
           } else if (colorOfCyrcle === "green") {
+            console.log(7);
             howMuchGreen = 255 * ((length + 1 - distance) / (length + 1));
           } else if (colorOfCyrcle === "blue") {
+            console.log(8);
             howMuchBlue = 255 * ((length + 1 - distance) / (length + 1));
           } else {
             //if none the "if"s above gets trigred and we are in this last else
             //it means that the cyrcle is one of those that we colored by drag/dropping
             const [r, g, b] = colorOfCyrcle.match(/\d+/g).map(Number);
-            howMuchRed = r * ((length + 1 - distance) / (length + 1));
-
-            howMuchGreen = g * ((length + 1 - distance) / (length + 1));
-
-            howMuchBlue = b * ((length + 1 - distance) / (length + 1));
+            howMuchRed =
+              howMuchRed + r * ((length + 1 - distance) / (length + 1));
+            howMuchGreen =
+              howMuchGreen + g * ((length + 1 - distance) / (length + 1));
+            howMuchBlue =
+              howMuchBlue + b * ((length + 1 - distance) / (length + 1));
           }
         }
       }
