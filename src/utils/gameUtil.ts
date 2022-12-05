@@ -126,7 +126,7 @@ export const findColor = (
       squareRowId + "," + 0,
       squareRowId + "," + (columns - 1),
     ];
-    console.log({ id, sideCyrclesIDS, coloredCyrcesIDs });
+
     let howMuchRed = 0;
     let howMuchGreen = 0;
     let howMuchBlue = 0;
@@ -137,10 +137,9 @@ export const findColor = (
           initialRgbCyrcles,
           (value) => value === cyrcleID
         );
-        console.log(3, { colorOfCyrcle });
+
         if (Object.keys(extraCyrcles).includes(cyrcleID)) {
           colorOfCyrcle = extraCyrcles[cyrcleID];
-          console.log(4, { colorOfCyrcle });
         }
 
         if (colorOfCyrcle) {
@@ -157,13 +156,10 @@ export const findColor = (
             : getTopRowCyrcleIDs(columns).length - 1;
 
           if (colorOfCyrcle === "red") {
-            console.log(6);
             howMuchRed = 255 * ((length + 1 - distance) / (length + 1));
           } else if (colorOfCyrcle === "green") {
-            console.log(7);
             howMuchGreen = 255 * ((length + 1 - distance) / (length + 1));
           } else if (colorOfCyrcle === "blue") {
-            console.log(8);
             howMuchBlue = 255 * ((length + 1 - distance) / (length + 1));
           } else {
             //if none the "if"s above gets trigred and we are in this last else
@@ -244,4 +240,11 @@ export const getTooltip = (
   return _.isEmpty(stateSquaresColors[id])
     ? ""
     : `rgb(${RGB[0]},${RGB[1]},${RGB[2]})`;
+};
+
+export const getPointer = (
+  id: string,
+  stateSquaresColors: { [index: string]: number[] }
+) => {
+  return Object.keys(stateSquaresColors).includes(id) ? "pointer" : "";
 };

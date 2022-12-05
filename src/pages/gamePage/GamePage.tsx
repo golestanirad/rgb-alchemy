@@ -15,6 +15,7 @@ import {
   getHighlighted,
   getClosestRGB,
   getTooltip,
+  getPointer,
 } from "../../utils/gameUtil";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks";
@@ -206,6 +207,7 @@ const GamePage: React.FC = () => {
                   height: "30px",
                   backgroundColor: `rgb(${gameData?.target[0]},${gameData?.target[1]},${gameData?.target[2]})`,
                   borderRadius: "10px",
+                  cursor: "pointer",
                 }}
               />
             }
@@ -222,7 +224,7 @@ const GamePage: React.FC = () => {
                 style={{
                   width: "30px",
                   height: "30px",
-
+                  cursor: "pointer",
                   backgroundColor: `${getClosestRGB(
                     stateSquaresColors,
                     closestSquars
@@ -263,7 +265,9 @@ const GamePage: React.FC = () => {
                 }}
                 key={j}
                 id={i + "," + j}
-                className={`${
+                className={`
+                ${styles[getPointer(i + "," + j, stateSquaresColors)]}
+                ${
                   styles[
                     getShapeType(i + "," + j, hiddenButtons, cyrcleButtons)
                   ]
